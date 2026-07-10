@@ -1,0 +1,46 @@
+# Copy to terraform.tfvars and populate with real values.
+# Do NOT commit terraform.tfvars — it contains account-specific data.
+
+aws_region  = "us-east-1"
+environment = "production"
+
+# ─── VPC ──────────────────────────────────────────────────────────────────────
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["a", "b", "c"]
+
+# Public subnets: NAT Gateways + Packer build instances
+public_subnet_cidrs = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
+
+# Private subnets: EKS nodes, EC2 SQL Server, IIS hosts, RDS
+private_subnet_cidrs = ["10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24"]
+
+# On-premises VPN range — RDP is restricted to this CIDR only
+vpn_cidr = "192.168.100.0/24"
+
+# Subnets that need SQL Server port 1433 access
+app_tier_cidrs = ["10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24"]
+
+# ─── EC2 ──────────────────────────────────────────────────────────────────────
+# Windows Server 2022 AMI (us-east-1). Refresh with:
+#   aws ec2 describe-images --owners amazon \
+#     --filters "Name=name,Values=Windows_Server-2022-English-Full-Base-*" \
+#     --query 'sort_by(Images,&CreationDate)[-1].ImageId' --output text
+windows_ami_id = "ami-0c2b0d3fb02824d92"
+
+alert_email = "oncall-infra@yourcompany.com"
+
+# ─── EKS ──────────────────────────────────────────────────────────────────────
+eks_cluster_name   = "production-healthcare-eks"
+kubernetes_version = "1.31"
+
+# ─── DNS ──────────────────────────────────────────────────────────────────────
+route53_zone_id = "Z0123456789ABCDEFGHIJ"
+internal_domain = "internal.example.com"
+
+# ─── Tags ─────────────────────────────────────────────────────────────────────
+common_tags = {
+  Team        = "platform"
+  CostCenter  = "engineering"
+  Application = "healthcare"
+  DataClass   = "PHI"
+}
